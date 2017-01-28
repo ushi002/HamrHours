@@ -22,6 +22,20 @@ class MyParser(HTMLParser):
     date_idx = 0
     available_hours = []
 
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.row_of_interest = 0
+        self.col_avail_idx = 3
+        self.col_idx = 1
+        self.half_hour_cnt = 0
+        self.found_free_hour = False
+        self.dates = []
+        self.lessons = []
+        # hamr half hours
+        self.hhhours = []
+        self.date_idx = 0
+        self.available_hours = []
+
     def set_date(self, dates_lessons):
         for dl in dates_lessons:
             print("DL:", dl[0], dl[1:])
@@ -170,9 +184,10 @@ if 1 == 1:
 # hledej_datum = "17.09.2015"
 # hledej_hodiny = [19.5, 20, 20.5]
 #hledej_casy = [["23.09.2015", 19, 19.5, 20, 20.5, 21], ["24.09.2015", 20, 20.5, 21], ["00.00.0000", 0]]
-hledej_casy = [["17.10.2016", 14, 14.5, 15], ["18.10.2016", 9, 9.5, 10], ["00.00.0000", 0]]
-pocet_pokusu = 1
-pauza_mezi_pokusy_s = 1
+#hledej_casy = [["17.10.2016", 14, 14.5, 15], ["1.11.2016", 9, 9.5, 10], ["00.00.0000", 0]]
+hledej_casy = [["16.11.2016", 19, 19.5, 20], ["00.00.0000", 0]]
+pocet_pokusu = 4320
+pauza_mezi_pokusy_s = 60
 
 for i in range(0, pocet_pokusu):
     #fajl = open('x.html', 'r')
@@ -187,15 +202,17 @@ for i in range(0, pocet_pokusu):
     if parser.found_free_hour:
         print("Nasli jsme volne hodiny: ")
         print(parser.available_hours)
-        msg = MIMEText('Ahoj kraliku')
-        msg['Subject'] ='Pokusny kralik'
+        msgtext ='Volne hodiny v braniku: ' + str(parser.available_hours)
+        #msg = MIMEText('Volne hodiny v braniku: ' + parser.available_hours);
+        msg = MIMEText(msgtext)
+        msg['Subject'] ='HamrHours checker'
         msg['From'] = 'ludek@vbox-ledora.ufa'
         msg['To'] = 'ludek.uhlir@gmail.com'
         #send the message
         try:
             s = smtplib.SMTP('mail.ufa.cas.cz')
             # s.set_debuglevel(1)
-            #s.send_message(msg)
+            s.send_message(msg)
             s.quit()
         except smtplib.SMTPException:
             print("Unable to send email")
